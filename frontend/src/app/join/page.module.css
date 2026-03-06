@@ -1,0 +1,18 @@
+.joinCard {
+  width: min(100%, 480px);
+  display: grid;
+  gap: 24px;
+  text-align: center;
+  animation: enterUp 0.5s ease-out both;
+}
+
+.joinTitle {
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+
+@keyframes enterUp {
+  from { opacity: 0; transform: translateY(24px); }
+}

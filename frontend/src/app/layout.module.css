@@ -1,0 +1,32 @@
+.shell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--pp-paper);
+  color: var(--pp-ink);
+  overflow: hidden;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--pp-ink) 1.1px, transparent 1.1px);
+  background-size: 22px 22px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.landingMain {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(40px, 8vw, 88px) clamp(20px, 4vw, 56px);
+}
+
+@media (max-width: 640px) {
+  .landingMain { padding-bottom: 28px; }
+}

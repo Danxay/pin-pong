@@ -1,0 +1,114 @@
+.actionLink,
+.buttonBase,
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 4px solid var(--pp-ink);
+  box-shadow: var(--pp-shadow-sm);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+
+.actionLink {
+  min-height: 56px;
+  padding: 0 22px;
+  background: var(--pp-white);
+  font-size: clamp(16px, 1.2vw, 22px);
+}
+
+.actionLinkAccent { background: var(--pp-lime); }
+.actionLinkSquare { width: 56px; padding: 0; }
+
+.actionIcon,
+.buttonIcon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.buttonBase {
+  min-height: 64px;
+  padding: 0 22px;
+  font-size: clamp(20px, 1.7vw, 30px);
+}
+
+.buttonPrimary { background: var(--pp-lime); }
+.buttonSecondary { background: var(--pp-white); }
+.buttonHero { min-height: 88px; font-size: clamp(28px, 2.8vw, 42px); }
+.buttonWide { width: 100%; }
+.buttonBase:disabled { opacity: 0.4; pointer-events: none; }
+
+.textInput {
+  width: 100%;
+  min-height: 72px;
+  padding: 0 22px;
+  border: 4px solid var(--pp-ink);
+  background: var(--pp-white);
+  box-shadow: var(--pp-shadow-sm);
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(20px, 2vw, 32px);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.textInput::placeholder {
+  color: rgba(18, 20, 16, 0.25);
+}
+
+.textInput:focus {
+  box-shadow: var(--pp-shadow-sm), 0 0 0 3px var(--pp-lime);
+}
+
+.joinForm {
+  display: grid;
+  gap: 18px;
+}
+
+.copyButton {
+  min-width: 290px;
+  min-height: 72px;
+  padding: 0 22px;
+  background: var(--pp-ink);
+  color: var(--pp-lime);
+  font-size: clamp(20px, 1.9vw, 30px);
+}
+
+.copyButtonActive {
+  background: var(--pp-white);
+  color: var(--pp-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .actionLink:hover,
+  .buttonBase:hover,
+  .copyButton:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 0 var(--pp-ink);
+  }
+}
+
+.actionLink:active,
+.buttonBase:active,
+.copyButton:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 0 var(--pp-ink);
+}
+
+@media (max-width: 640px) {
+  .actionLink { min-height: 50px; padding: 0 16px; font-size: 14px; }
+  .actionLinkSquare { width: 50px; }
+  .buttonHero { min-height: 82px; }
+  .textInput { min-height: 66px; font-size: 20px; }
+  .copyButton { min-height: 74px; font-size: 24px; }
+}
