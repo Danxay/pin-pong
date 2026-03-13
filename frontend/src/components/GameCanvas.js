@@ -24,7 +24,7 @@ export default function GameCanvas({
     const dpr = window.devicePixelRatio || 1;
     const isHost = myRole === "player1";
 
-    const ball = { x: 50, y: 50, vx: 0.04, vy: 0.03 };
+    const ball = { x: 50, y: 50, vx: 0, vy: 0 };
     const pad = { player: 50, opponent: 50 };
     const score = { player1: 0, player2: 0 };
     let mouse = null;
@@ -43,6 +43,7 @@ export default function GameCanvas({
     const ro = new ResizeObserver(resize);
     ro.observe(canvas.parentElement);
     resize();
+    resetBall(1);
 
     function ptrMove(e) {
       e.preventDefault();
@@ -104,7 +105,12 @@ export default function GameCanvas({
       ball.vy = Math.max(-0.08, Math.min(0.08, ball.vy));
 
       if (onGameState) {
-        onGameState({ x: ball.x, y: ball.y, s1: score.player1, s2: score.player2, pp: pad.player });
+        const v = H > W;
+        onGameState({
+          x: v ? ball.y : ball.x,
+          y: v ? ball.x : ball.y,
+          s1: score.player1, s2: score.player2, pp: pad.player,
+        });
       }
 
       if (score.player1 >= WIN_SCORE || score.player2 >= WIN_SCORE) {
@@ -137,8 +143,9 @@ export default function GameCanvas({
         if (!finished) updateBall(dt);
       } else if (gameStateRef?.current) {
         const gs = gameStateRef.current;
-        ball.x = v ? gs.x : 100 - gs.x;
-        ball.y = v ? 100 - gs.y : gs.y;
+        const gx = 100 - gs.x;
+        if (v) { ball.x = gs.y; ball.y = gx; }
+        else   { ball.x = gx;   ball.y = gs.y; }
         score.player1 = gs.s1;
         score.player2 = gs.s2;
       }

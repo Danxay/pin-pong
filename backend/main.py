@@ -29,7 +29,7 @@ async def create_room(body: PlayerNameBody):
 
 @app.get("/api/rooms/{code}")
 async def get_room(code: str):
-    room = rooms.get(code)
+    room = rooms.get(code.lower())
     if not room:
         raise HTTPException(404, "Room not found")
     return {
@@ -41,7 +41,7 @@ async def get_room(code: str):
 
 @app.post("/api/rooms/{code}/join")
 async def join_room(code: str, body: PlayerNameBody):
-    room = rooms.get(code)
+    room = rooms.get(code.lower())
     if not room:
         raise HTTPException(404, "Room not found")
     if room.is_full():
@@ -52,7 +52,7 @@ async def join_room(code: str, body: PlayerNameBody):
 
 @app.get("/api/rooms/{code}/result")
 async def get_result(code: str):
-    room = rooms.get(code)
+    room = rooms.get(code.lower())
     if not room or not room.result:
         raise HTTPException(404, "Result not found")
     return room.result
@@ -68,6 +68,7 @@ def _room_msg(room):
 
 @app.websocket("/ws/{room_code}")
 async def ws_endpoint(ws: WebSocket, room_code: str, player_id: str = Query(...)):
+    room_code = room_code.lower()
     room = rooms.get(room_code)
     if not room:
         await ws.close(code=4004)
