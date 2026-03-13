@@ -54,3 +54,28 @@ export function BrutalLinkButton({
     </Link>
   );
 }
+
+export function BrutalButton({
+  onClick,
+  icon,
+  children,
+  variant = "primary",
+  size = "default",
+  disabled = false,
+}) {
+  return (
+    <button
+      className={cx(
+        styles.buttonBase,
+        variant === "primary" ? styles.buttonPrimary : styles.buttonSecondary,
+        size === "hero" && styles.buttonHero,
+        size === "wide" && styles.buttonWide,
+      )}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {icon ? <Icon className={styles.buttonIcon} name={icon} /> : null}
+      <span>{children}</span>
+    </button>
+  );
+}

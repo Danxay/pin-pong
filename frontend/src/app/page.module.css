@@ -65,6 +65,26 @@
   animation: enterFade 0.4s ease-out 0.15s both;
 }
 
+.nickInput {
+  width: min(100%, 360px);
+  padding: 14px 18px;
+  border: 3px solid var(--pp-ink);
+  background: #fff;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  box-shadow: var(--pp-shadow-sm);
+  animation: enterUp 0.5s ease-out 0.2s both;
+}
+
+.nickInput::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
 .ctaStack {
   width: min(100%, 360px);
   display: grid;

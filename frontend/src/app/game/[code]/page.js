@@ -1,66 +1,86 @@
+"use client";
+
+import { use, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import GameCanvas from "@/components/GameCanvas";
-import ScreenStateBridge from "@/components/ScreenStateBridge";
 import { ActionLink } from "@/components/ui/UI";
+import { usePlayer } from "@/context/PlayerContext";
+import useWebSocket from "@/hooks/useWebSocket";
 import s from "./page.module.css";
 
-export async function generateMetadata({ params }) {
-  const { code } = await params;
-  return { title: `Матч ${code} | Пинг-Понг` };
-}
-
-const playerNick = "ИГРОК";
-const opponentNick = "ГОСТЬ";
-
-export default async function GamePage({ params }) {
-  const { code } = await params;
+export default function GamePage({ params }) {
+  const { code } = use(params);
   const roomCode = decodeURIComponent(code);
+  const router = useRouter();
+
+  const { id: playerId, name: playerName } = usePlayer();
+  const { sendMessage, myRole, roomUpdate, matchEnd, opponentPaddleRef, gameStateRef } =
+    useWebSocket(roomCode, playerId);
+
+  const players = roomUpdate?.players || [];
+  const me = players.find((p) => p.id === playerId);
+  const opponent = players.find((p) => p.id !== playerId);
+
+  const onPaddleMove = useCallback(
+    (y) => sendMessage("paddle_move", { y }),
+    [sendMessage]
+  );
+
+  const onGameState = useCallback(
+    (state) => sendMessage("game_state", state),
+    [sendMessage]
+  );
+
+  const onMatchEnd = useCallback(
+    (result) => {
+      const names = {};
+      (roomUpdate?.players || []).forEach((p, i) => {
+        names[i === 0 ? "player1" : "player2"] = p.name;
+      });
+      sendMessage("match_end", { result: { ...result, names } });
+      setTimeout(() => router.push(`/result/${roomCode}`), 1500);
+    },
+    [sendMessage, roomCode, router, roomUpdate]
+  );
+
+  useEffect(() => {
+    if (matchEnd) {
+      setTimeout(() => router.push(`/result/${roomCode}`), 1500);
+    }
+  }, [matchEnd, roomCode, router]);
 
   return (
-    <>
-      <ScreenStateBridge
-        payload={{
-          screen: "game",
-          roomCode,
-          score: { opponent: 5, you: 12 },
-          pingMs: 12,
-          opponent: {
-            nick: opponentNick,
-            paddle: { x: 50, y: 10, width: 18, height: 3 },
-          },
-          player: {
-            nick: playerNick,
-            paddle: { x: 52, y: 90, width: 18, height: 3 },
-          },
-          ball: { x: 60, y: 41, size: 3 },
-        }}
-      />
+    <div className={s.gameShell}>
+      <main className={s.gameStage}>
+        <ActionLink href="/" icon="logout" className={s.gameExitLink}>
+          ВЫХОД
+        </ActionLink>
 
-      <div className={s.gameShell}>
-        <main className={s.gameStage}>
-          <ActionLink href="/" icon="logout" className={s.gameExitLink}>
-            ВЫХОД
-          </ActionLink>
+        <div className={s.gameField}>
+          <GameCanvas
+            opponentPaddleRef={opponentPaddleRef}
+            onPaddleMove={onPaddleMove}
+            onMatchEnd={onMatchEnd}
+            onGameState={onGameState}
+            gameStateRef={gameStateRef}
+            myRole={myRole || "player1"}
+          />
 
-          <div className={s.gameField}>
-            <GameCanvas score={{ you: 12, opponent: 5 }} />
-
-            <div className={s.hudRow}>
-              <div className={s.hudTag}>
-                <span className={`${s.hudDot} ${s.hudDotPurple}`} />
-                <span>{opponentNick}</span>
-              </div>
-              <div className={s.pingTag}>12ms</div>
-            </div>
-
-            <div className={`${s.hudTag} ${s.playerHud}`}>
-              <span>{playerNick}</span>
-              <span className={`${s.hudDot} ${s.hudDotLime}`} />
+          <div className={s.hudRow}>
+            <div className={s.hudTag}>
+              <span className={`${s.hudDot} ${s.hudDotPurple}`} />
+              <span>{opponent?.name || "СОПЕРНИК"}</span>
             </div>
           </div>
 
-          <p className={s.mobileHint}>ДВИГАЙ ПАЛЬЦЕМ</p>
-        </main>
-      </div>
-    </>
+          <div className={`${s.hudTag} ${s.playerHud}`}>
+            <span>{me?.name || playerName || "ТЫ"}</span>
+            <span className={`${s.hudDot} ${s.hudDotLime}`} />
+          </div>
+        </div>
+
+        <p className={s.mobileHint}>ДВИГАЙ ПАЛЬЦЕМ</p>
+      </main>
+    </div>
   );
 }

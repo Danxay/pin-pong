@@ -39,6 +39,7 @@
   min-height: 64px;
   padding: 0 22px;
   font-size: clamp(20px, 1.7vw, 30px);
+  cursor: pointer;
 }
 
 .buttonPrimary { background: var(--pp-lime); }
